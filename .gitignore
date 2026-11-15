@@ -1,0 +1,14 @@
+app_data/
+vendor/
+erp.html
+admin_dashboard.html
+mobile_app.html
+care_app.html
+payroll_workstation.html
+doc_view.html
+staff.html
+*.vbs
+*.bat
+_headers
+_redirects
+.env*

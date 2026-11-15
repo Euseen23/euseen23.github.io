@@ -1,0 +1,42 @@
+User-agent: *
+Allow: /
+Disallow: /staff.html
+Disallow: /admin_dashboard.html
+
+User-agent: Yeti
+Allow: /
+Disallow: /staff.html
+Disallow: /admin_dashboard.html
+
+User-agent: Googlebot
+Allow: /
+Disallow: /staff.html
+Disallow: /admin_dashboard.html
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Daumoa
+Allow: /
+Disallow: /staff.html
+Disallow: /admin_dashboard.html
+
+Sitemap: https://happycare-kr.github.io/sitemap.xml
