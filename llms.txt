@@ -29,4 +29,4 @@
 - [대전 가족요양 60분·90분 급여 조건 및 방문목욕 병행 안내](https://happycare-kr.github.io/family-care.html)
 - [대전 가정 방문목욕 2인 1조 안전 목욕 및 수가 안내](https://happycare-kr.github.io/bath-care.html)
 - [대전 장기요양등급 신청방법·의사소견서·방문조사 체크리스트](https://happycare-kr.github.io/grade-guide.html)
-- [전체 장기요양 실무 가이드 칼럼 (132편)](https://happycare-kr.github.io/guides/index.html)
+- [전체 장기요양 실무 가이드 칼럼 (133편)](https://happycare-kr.github.io/guides/index.html)
