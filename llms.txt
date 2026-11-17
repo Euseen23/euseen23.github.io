@@ -25,6 +25,7 @@
 
 ## 주요 공식 안내 페이지
 - [공식 홈페이지 및 2026년 본인부담금 자동 계산기](https://happycare-kr.github.io/)
+- [무료 요양상담 · 문의게시판 (다빈도 상담 Q&A 24선)](https://happycare-kr.github.io/consult.html)
 - [대전 방문요양 1:1 맞춤 돌봄 및 비용 안내](https://happycare-kr.github.io/visit-care.html)
 - [대전 가족요양 60분·90분 급여 조건 및 방문목욕 병행 안내](https://happycare-kr.github.io/family-care.html)
 - [대전 가정 방문목욕 2인 1조 안전 목욕 및 수가 안내](https://happycare-kr.github.io/bath-care.html)

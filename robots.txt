@@ -2,16 +2,31 @@ User-agent: *
 Allow: /
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
+Disallow: /erp.html
+Disallow: /mobile_app.html
+Disallow: /care_app.html
+Disallow: /payroll_workstation.html
+Disallow: /doc_view.html
 
 User-agent: Yeti
 Allow: /
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
+Disallow: /erp.html
+Disallow: /mobile_app.html
+Disallow: /care_app.html
+Disallow: /payroll_workstation.html
+Disallow: /doc_view.html
 
 User-agent: Googlebot
 Allow: /
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
+Disallow: /erp.html
+Disallow: /mobile_app.html
+Disallow: /care_app.html
+Disallow: /payroll_workstation.html
+Disallow: /doc_view.html
 
 User-agent: Google-Extended
 Allow: /
@@ -38,5 +53,10 @@ User-agent: Daumoa
 Allow: /
 Disallow: /staff.html
 Disallow: /admin_dashboard.html
+Disallow: /erp.html
+Disallow: /mobile_app.html
+Disallow: /care_app.html
+Disallow: /payroll_workstation.html
+Disallow: /doc_view.html
 
 Sitemap: https://happycare-kr.github.io/sitemap.xml
