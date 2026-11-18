@@ -31,6 +31,26 @@ Disallow: /doc_view.html
 User-agent: Google-Extended
 Allow: /
 
+User-agent: GoogleOther
+Allow: /
+Disallow: /staff.html
+Disallow: /admin_dashboard.html
+Disallow: /erp.html
+Disallow: /mobile_app.html
+Disallow: /care_app.html
+Disallow: /payroll_workstation.html
+Disallow: /doc_view.html
+
+User-agent: Google-CloudVertexBot
+Allow: /
+Disallow: /staff.html
+Disallow: /admin_dashboard.html
+Disallow: /erp.html
+Disallow: /mobile_app.html
+Disallow: /care_app.html
+Disallow: /payroll_workstation.html
+Disallow: /doc_view.html
+
 User-agent: Applebot-Extended
 Allow: /
 
