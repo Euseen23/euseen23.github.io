@@ -80,4 +80,3 @@ Disallow: /payroll_workstation.html
 Disallow: /doc_view.html
 
 Sitemap: https://happycare-kr.github.io/sitemap.xml
-Sitemap: https://happycare-kr.github.io/video-sitemap.xml
