@@ -994,8 +994,8 @@ h1, h2, h3, h4, .section-title, .section-desc {
 .mobile-bar {
   display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 250;
   background: rgba(255,255,255,0.98); border-top: 1px solid var(--line-light);
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
-  gap: 8px;
+  padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  gap: 6px;
   box-shadow: 0 -4px 20px rgba(8, 51, 54, 0.08);
 }
 .mobile-bar a {
