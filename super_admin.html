@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>행복케어 SaaS 본사 구독 · 기관 관리</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #F1F5F9; color: #0F172A; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; overflow-x: hidden; }
+  .sa-top {
+    background: #1B365D; color: #FFF; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
+  }
+  .sa-title-wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sa-title { font-size: 16px; font-weight: 900; letter-spacing: -0.3px; }
+  .sa-badge { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.32); border-radius: 999px; padding: 3px 10px; font-size: 11.5px; font-weight: 800; }
+  .sa-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid #CBD5E1; background: #FFF; color: #0F172A; border-radius: 6px;
+    padding: 6px 11px; font-size: 12px; font-weight: 800; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  }
+  .btn:hover { background: #F8FAFC; }
+  .btn.pri { background: #0F766E; border-color: #0F766E; color: #FFF; }
+  .btn.pri:hover { background: #0D5F59; }
+  .btn.blue { background: #1D4ED8; border-color: #1D4ED8; color: #FFF; }
+  .btn.warn { background: #D97706; border-color: #D97706; color: #FFF; }
+  .btn.danger { background: #DC2626; border-color: #DC2626; color: #FFF; }
+  .btn.xs { padding: 3px 7px; font-size: 11px; border-radius: 4px; }
+  .sa-wrap { max-width: 1420px; margin: 14px auto; padding: 0 14px 28px; display: flex; flex-direction: column; gap: 12px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 700px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi-card {
+    background: #FFF; border: 1px solid #CBD5E1; border-radius: 10px; padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .05);
+  }
+  .kpi-lbl { font-size: 12px; color: #475569; font-weight: 700; margin-bottom: 4px; }
+  .kpi-val { font-size: 22px; font-weight: 900; color: #0F172A; }
+  .kpi-sub { font-size: 11.5px; color: #64748B; margin-top: 3px; font-weight: 700; }
+  .card {
+    background: #FFF; border: 1px solid #CBD5E1; border-radius: 10px; padding: 14px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .05);
+  }
+  .filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .pill-row { display: flex; gap: 5px; flex-wrap: wrap; }
+  .fpill {
+    border: 1px solid #CBD5E1; background: #F8FAFC; color: #334155; border-radius: 999px;
+    padding: 5px 11px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
+  }
+  .fpill.active { background: #1B365D; border-color: #1B365D; color: #FFF; }
+  .search-inp { border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px 10px; font-size: 12.5px; width: 250px; max-width: 100%; }
+  .tbl-wrap { width: 100%; overflow-x: auto; }
+  table.sa-tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.sa-tbl th {
+    background: #F8FAFC; color: #334155; font-weight: 900; text-align: left;
+    padding: 8px 7px; border-top: 1px solid #CBD5E1; border-bottom: 2px solid #CBD5E1; white-space: nowrap;
+  }
+  table.sa-tbl td { padding: 8px 7px; border-bottom: 1px solid #E2E8F0; vertical-align: middle; }
+  table.sa-tbl tr:hover td { background: #F8FAFC; }
+  .tag { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; }
+  .t-free-unlim { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+  .t-free-tier { background: #F0F9FF; color: #0369A1; border: 1px solid #BAE6FD; }
+  .t-trial { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .t-paid { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+  .st-active { background: #DCFCE7; color: #166534; }
+  .st-expiring { background: #FEF3C7; color: #B45309; }
+  .st-grace { background: #FFEDD5; color: #C2410C; }
+  .st-readonly { background: #FEE2E2; color: #B91C1C; }
+  .st-locked { background: #7F1D1D; color: #FFF; }
+  .feat-badge { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 10.5px; font-weight: 800; margin: 1px; background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+  .feat-off { background: #F1F5F9; color: #94A3B8; border-color: #E2E8F0; text-decoration: line-through; }
+  .act-cell { display: flex; gap: 4px; flex-wrap: wrap; max-width: 245px; }
+  .srv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 12.5px; line-height: 1.65; }
+  @media (max-width: 900px) { .srv-grid { grid-template-columns: 1fr; } }
+  .srv-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 11px 13px; word-break: break-all; }
+  .md-bg {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, .62); z-index: 9000;
+    display: none; align-items: center; justify-content: center; padding: 14px;
+  }
+  .md-bg.open { display: flex; }
+  .md-box {
+    background: #FFF; border-radius: 12px; width: 100%; max-width: 680px; max-height: 90vh;
+    display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 18px 40px rgba(15,23,42,.35);
+  }
+  .md-head {
+    background: #1B365D; color: #FFF; padding: 11px 15px; display: flex;
+    align-items: center; justify-content: space-between; font-weight: 900; font-size: 14px;
+  }
+  .md-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
+  .md-foot { padding: 10px 16px; border-top: 1px solid #E2E8F0; background: #F8FAFC; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 640px) { .fgrid { grid-template-columns: 1fr; } }
+  .fld { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+  .fld.full { grid-column: 1 / -1; }
+  .fld label { font-weight: 800; color: #334155; }
+  .inp, select.inp, textarea.inp { border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px 9px; font-size: 12.5px; width: 100%; font-family: inherit; }
+  .preset-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; padding: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; }
+  .chk-row { display: flex; gap: 12px; flex-wrap: wrap; padding: 8px 10px; background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px; }
+  .chk-row label { display: inline-flex; align-items: center; gap: 5px; font-weight: 800; cursor: pointer; font-size: 12px; }
+  #sa-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0F172A; color: #FFF;
+    padding: 9px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 800; z-index: 9999; display: none;
+  }
+</style>
+</head>
+<body>
+
+<header class="sa-top">
+  <div class="sa-title-wrap">
+    <div class="sa-title">행복케어 SaaS 본사 구독 · 기관 관리</div>
+    <span class="sa-badge" id="sa-url-pill">서버 URL 확인 중...</span>
+    <button type="button" class="btn xs" onclick="copyMainLoginUrl()">주소 복사</button>
+  </div>
+  <div class="sa-actions">
+    <button type="button" class="btn pri" id="btn-sa-new" onclick="openTenantModal('')">+ 신규 기관 개설</button>
+    <button type="button" class="btn" onclick="loadOverview()">새로고침</button>
+    <a class="btn" href="/admin_dashboard.html">상담관제</a>
+    <a class="btn blue" href="/erp.html">ERP 바로가기</a>
+  </div>
+</header>
+
+<div class="md-bg" id="sa-auth-bg" style="z-index:9500;">
+  <div class="md-box" style="max-width:380px;">
+    <div class="md-head"><span>본사 슈퍼관리자 인증</span></div>
+    <div class="md-body">
+      <div class="fld">
+        <label for="sa-pin-inp">본사 관리자 보안 비밀번호(PIN)</label>
+        <input class="inp" id="sa-pin-inp" type="password" placeholder="관리자 PIN 입력" onkeydown="if(event.key==='Enter')submitSaAuth()">
+      </div>
+      <div style="font-size:11.5px;color:#64748B;margin-top:8px;">외부 접속 또는 관리자 인증이 필요한 경우 PIN을 입력해 주세요.</div>
+    </div>
+    <div class="md-foot" style="justify-content:flex-end;">
+      <button type="button" class="btn pri" onclick="submitSaAuth()">인증 후 입장</button>
+    </div>
+  </div>
+</div>
+
+<div class="sa-wrap">
+  <section class="kpi-grid" id="sa-kpis">
+    <div class="kpi-card"><div class="kpi-lbl">전체 등록 기관</div><div class="kpi-val" id="kpi-total">0</div><div class="kpi-sub">직영 + 고객사 합계</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">유료 구독 · 월 예상 이용료</div><div class="kpi-val" id="kpi-paid">0곳</div><div class="kpi-sub" id="kpi-rev">월 0원</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">무료 · 직영 기관</div><div class="kpi-val" id="kpi-free">0</div><div class="kpi-sub" id="kpi-free-sub">영구무료 / 소규모무료</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">무료체험 중</div><div class="kpi-val" id="kpi-trial">0</div><div class="kpi-sub">도입 검토 센터</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">만료임박 · 미납 · 잠금</div><div class="kpi-val" id="kpi-warn">0</div><div class="kpi-sub">D-7 · 유예 · 제한</div></div>
+  </section>
+
+  <section class="card">
+    <div class="filter-bar">
+      <div class="pill-row" id="sa-filter-pills">
+        <button type="button" class="fpill active" data-filter="ALL" onclick="setFilter('ALL')">전체</button>
+        <button type="button" class="fpill" data-filter="FREE_UNLIMITED" onclick="setFilter('FREE_UNLIMITED')">영구무료</button>
+        <button type="button" class="fpill" data-filter="FREE_TIER" onclick="setFilter('FREE_TIER')">무료플랜</button>
+        <button type="button" class="fpill" data-filter="TRIAL" onclick="setFilter('TRIAL')">무료체험</button>
+        <button type="button" class="fpill" data-filter="PAID" onclick="setFilter('PAID')">유료구독</button>
+        <button type="button" class="fpill" data-filter="WARN" onclick="setFilter('WARN')">만료임박·잠금</button>
+      </div>
+      <input class="search-inp" id="sa-search" placeholder="기관기호 · 기관명 · 연락처 검색" oninput="renderTenantTable()">
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="sa-tbl">
+        <thead>
+          <tr>
+            <th>기관기호</th>
+            <th>기관명 · 연락처</th>
+            <th>과금구분 / 플랜</th>
+            <th>월 이용료</th>
+            <th>만료일 (D-day)</th>
+            <th>수급자 (현재/상한)</th>
+            <th>활성기능</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="sa-tenant-tbody">
+          <tr><td colspan="9" style="text-align:center;color:#64748B;padding:24px;">기관 구독 현황을 불러오는 중입니다...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div style="font-weight:900;font-size:13.5px;color:#1B365D;margin-bottom:8px;">서버 역할 · 데이터 저장소 및 클라우드 이전 안내</div>
+    <div class="srv-grid">
+      <div class="srv-box" id="sa-srv-info">서버 정보 확인 중...</div>
+      <div class="srv-box">
+        <b>운영 단계별 확장 구조</b><br>
+        • <b>1단계 (사무실 PC/미니PC + 고정 도메인):</b> 현재 켜진 <code>happycare_server.py</code>가 중앙 웹서버 역할을 하며, 모든 고객 기관 데이터는 기관기호 11자리별 폴더와 사내 NAS에 안전하게 격리 저장됩니다.<br>
+        • <b>2단계 (국내 클라우드 VPS 1대 이전):</b> 고객이 10곳을 넘으면 <code>engine</code>·<code>site</code>·<code>brand/erp</code> 폴더를 월 3~5만 원대 클라우드 서버로 복사해 24시간 365일 무중단 운영으로 즉시 전환합니다.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 1. 신규 기관 개설 / 구독 설정 모달 -->
+<div class="md-bg" id="md-tenant">
+  <div class="md-box">
+    <div class="md-head">
+      <span id="md-tenant-title">신규 기관 개설</span>
+      <button type="button" class="btn xs" onclick="closeMd('md-tenant')">닫기</button>
+    </div>
+    <div class="md-body">
+      <div class="preset-row">
+        <span style="font-size:11.5px;font-weight:900;color:#475569;align-self:center;">빠른 프리셋:</span>
+        <button type="button" class="btn xs" onclick="applyPreset('FREE_DIRECT')">직영 영구무료</button>
+        <button type="button" class="btn xs" onclick="applyPreset('FREE_PARTNER')">지인/제휴 영구무료</button>
+        <button type="button" class="btn xs" onclick="applyPreset('FREE_SMALL')">소규모 무료(15명)</button>
+        <button type="button" class="btn xs" onclick="applyPreset('TRIAL_30')">무료체험 30일</button>
+        <button type="button" class="btn xs" onclick="applyPreset('BASIC_30')">베이직 월 3만</button>
+        <button type="button" class="btn xs" onclick="applyPreset('PRO_50')">프로 월 5만</button>
+      </div>
+      <div class="fgrid">
+        <div class="fld">
+          <label for="t-agency">장기요양기관기호 (11자리 숫자) *</label>
+          <input class="inp" id="t-agency" placeholder="예: 33020000999" maxlength="13">
+        </div>
+        <div class="fld">
+          <label for="t-name">기관명 *</label>
+          <input class="inp" id="t-name" placeholder="예: 행복방문요양센터">
+        </div>
+        <div class="fld">
+          <label for="t-contact-nm">대표자 / 담당자 성함</label>
+          <input class="inp" id="t-contact-nm" placeholder="예: 김원장">
+        </div>
+        <div class="fld">
+          <label for="t-contact-ph">연락처</label>
+          <input class="inp" id="t-contact-ph" placeholder="예: 010-1234-5678">
+        </div>
+        <div class="fld">
+          <label for="t-login-id">기관 관리자 로그인 아이디</label>
+          <input class="inp" id="t-login-id" placeholder="예: 김원장 또는 admin">
+        </div>
+        <div class="fld">
+          <label for="t-login-pw">관리자 비밀번호 (수정 시 변경할 때만 입력)</label>
+          <div style="display:flex;gap:5px;">
+            <input class="inp" id="t-login-pw" placeholder="초기 비밀번호 입력">
+            <button type="button" class="btn xs" onclick="genTempPassword()">생성</button>
+          </div>
+        </div>
+        <div class="fld">
+          <label for="t-btype">과금 구분</label>
+          <select class="inp" id="t-btype" onchange="onBillingTypeChange()">
+            <option value="FREE_UNLIMITED">영구 무료 (직영/제휴)</option>
+            <option value="FREE_TIER">무료 플랜 (소규모/기능제한)</option>
+            <option value="TRIAL">무료 체험 (기간제)</option>
+            <option value="PAID">유료 구독</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="t-plan">요금제 / 플랜명</label>
+          <input class="inp" id="t-plan" placeholder="예: 프로 유료구독">
+        </div>
+        <div class="fld">
+          <label for="t-fee">월 이용료 (원)</label>
+          <input class="inp" id="t-fee" type="number" min="0" step="1000" value="0">
+        </div>
+        <div class="fld">
+          <label for="t-exp">만료일 (무료는 비워둠)</label>
+          <input class="inp" id="t-exp" type="date">
+        </div>
+        <div class="fld">
+          <label for="t-grace">미납 유예일수 (일)</label>
+          <input class="inp" id="t-grace" type="number" min="0" value="7">
+        </div>
+        <div class="fld">
+          <label for="t-exp-action">만료 후 동작</label>
+          <select class="inp" id="t-exp-action">
+            <option value="READONLY">읽기전용 (조회·백업만 허용)</option>
+            <option value="LOCKED">접속잠금 (백업만 허용)</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="t-max-pts">수급자 상한 (0 = 무제한)</label>
+          <input class="inp" id="t-max-pts" type="number" min="0" value="0">
+        </div>
+        <div class="fld">
+          <label for="t-support">본사 안내 연락처(배너 표시용)</label>
+          <input class="inp" id="t-support" placeholder="본사 고객센터">
+        </div>
+        <div class="fld full">
+          <label>사용 허용 기능 (기관별 ON/OFF)</label>
+          <div class="chk-row">
+            <label><input type="checkbox" id="t-f-erp" checked> 기본 ERP 전체</label>
+            <label><input type="checkbox" id="t-f-msg" checked> 스마트폰앱·메신저·봇·푸시</label>
+            <label><input type="checkbox" id="t-f-consult" checked> 통합 상담관제</label>
+            <label><input type="checkbox" id="t-f-nhis" checked> 공단 자동연동</label>
+          </div>
+        </div>
+        <div class="fld full">
+          <label for="t-memo">본사 관리 메모 (계약 조건·입금 계좌 등)</label>
+          <textarea class="inp" id="t-memo" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="md-foot">
+      <div>
+        <button type="button" class="btn danger" id="btn-t-delete" style="display:none;" onclick="deleteCurrentTenant()">기관 삭제</button>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button type="button" class="btn" onclick="closeMd('md-tenant')">취소</button>
+        <button type="button" class="btn pri" onclick="saveTenantForm()">저장 및 적용</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 카톡 개통 안내문구 모달 -->
+<div class="md-bg" id="md-welcome">
+  <div class="md-box" style="max-width:560px;">
+    <div class="md-head">
+      <span>카카오톡 개통 안내문구</span>
+      <button type="button" class="btn xs" onclick="closeMd('md-welcome')">닫기</button>
+    </div>
+    <div class="md-body">
+      <div style="font-size:12px;color:#475569;margin-bottom:8px;">아래 문구를 복사해 고객 센터장님 카카오톡으로 바로 전달하세요.</div>
+      <textarea class="inp" id="welcome-msg-box" rows="13" readonly style="background:#F8FAFC;line-height:1.55;"></textarea>
+    </div>
+    <div class="md-foot" style="justify-content:flex-end;">
+      <button type="button" class="btn" onclick="closeMd('md-welcome')">닫기</button>
+      <button type="button" class="btn pri" onclick="copyWelcomeMsg()">문구 복사</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 입금 확인 · 기간 연장 이력 모달 -->
+<div class="md-bg" id="md-extend">
+  <div class="md-box" style="max-width:640px;">
+    <div class="md-head">
+      <span id="md-ext-title">이용기간 연장 및 입금 이력</span>
+      <button type="button" class="btn xs" onclick="closeMd('md-extend')">닫기</button>
+    </div>
+    <div class="md-body">
+      <div class="preset-row">
+        <button type="button" class="btn xs pri" onclick="quickExtend(1, 0)">+1개월</button>
+        <button type="button" class="btn xs pri" onclick="quickExtend(3, 0)">+3개월</button>
+        <button type="button" class="btn xs pri" onclick="quickExtend(6, 0)">+6개월</button>
+        <button type="button" class="btn xs pri" onclick="quickExtend(12, 0)">+12개월</button>
+        <button type="button" class="btn xs blue" onclick="quickExtend(0, 30, 'TRIAL', 0)">+30일 체험</button>
+      </div>
+      <div class="fgrid" style="margin-bottom:12px;">
+        <div class="fld"><label for="ext-months">연장 개월수</label><input class="inp" id="ext-months" type="number" min="0" value="1"></div>
+        <div class="fld"><label for="ext-days">추가 일수</label><input class="inp" id="ext-days" type="number" min="0" value="0"></div>
+        <div class="fld"><label for="ext-amt">입금 확인 금액 (원)</label><input class="inp" id="ext-amt" type="number" min="0" step="1000" value="0"></div>
+        <div class="fld"><label for="ext-method">결제 수단</label>
+          <select class="inp" id="ext-method">
+            <option value="계좌이체">계좌이체</option>
+            <option value="효성CMS">효성CMS</option>
+            <option value="카드">카드</option>
+            <option value="무료부여">무료부여</option>
+          </select>
+        </div>
+        <div class="fld full"><label for="ext-memo">연장 메모</label><input class="inp" id="ext-memo" placeholder="예: 11월 이용료 입금 확인"></div>
+      </div>
+      <div style="font-weight:900;font-size:12.5px;margin-bottom:6px;">최근 입금 · 연장 이력</div>
+      <div class="tbl-wrap" style="max-height:220px;overflow-y:auto;">
+        <table class="sa-tbl">
+          <thead><tr><th>일시</th><th>연장</th><th>금액</th><th>수단</th><th>새 만료일</th><th>메모</th></tr></thead>
+          <tbody id="ext-hist-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="md-foot" style="justify-content:flex-end;">
+      <button type="button" class="btn" onclick="closeMd('md-extend')">닫기</button>
+      <button type="button" class="btn pri" onclick="submitExtendForm()">연장 확정</button>
+    </div>
+  </div>
+</div>
+
+<div id="sa-toast"></div>
+
+<script>
+let _overview = { tenants: [], kpi: {}, serverInfo: {} };
+let _curFilter = 'ALL';
+let _editAgency = '';
+let _extAgency = '';
+
+function h(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toast(msg) {
+  const el = document.getElementById('sa-toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(window._saToastTimer);
+  window._saToastTimer = setTimeout(() => { el.style.display = 'none'; }, 2600);
+}
+function closeMd(id) { document.getElementById(id).classList.remove('open'); }
+function getSaPin() { return sessionStorage.getItem('hc_sa_pin') || sessionStorage.getItem('hc_admin_auth_key') || ''; }
+
+async function saApi(path, body) {
+  const pin = getSaPin();
+  const headers = {};
+  if (pin) headers['X-HC-Super-Auth'] = pin;
+  const opt = { headers, cache: 'no-store' };
+  if (body !== undefined) {
+    opt.method = 'POST';
+    headers['Content-Type'] = 'application/json';
+    opt.body = JSON.stringify(Object.assign({ authKey: pin }, body));
+  }
+  const r = await fetch(path, opt);
+  const j = await r.json().catch(() => ({ ok: false, error: '응답 오류' }));
+  if (r.status === 401 || j.authError) {
+    document.getElementById('sa-auth-bg').classList.add('open');
+    throw new Error(j.error || '본사 관리자 인증이 필요합니다.');
+  }
+  if (!j.ok) throw new Error(j.error || '처리 실패');
+  return j;
+}
+
+function submitSaAuth() {
+  const pin = (document.getElementById('sa-pin-inp').value || '').trim();
+  if (!pin) { toast('비밀번호를 입력해 주세요.'); return; }
+  sessionStorage.setItem('hc_sa_pin', pin);
+  document.getElementById('sa-auth-bg').classList.remove('open');
+  loadOverview();
+}
+
+async function loadOverview() {
+  try {
+    const res = await saApi('/api/super/overview');
+    _overview = res;
+    document.getElementById('sa-auth-bg').classList.remove('open');
+    renderKpis(res.kpi || {});
+    renderServerInfo(res.serverInfo || {});
+    renderTenantTable();
+  } catch (e) {
+    toast(e.message || '조회 오류');
+  }
+}
+
+function renderKpis(k) {
+  document.getElementById('kpi-total').textContent = (k.total || 0) + '곳';
+  document.getElementById('kpi-paid').textContent = (k.paidCount || 0) + '곳';
+  document.getElementById('kpi-rev').textContent = '월 ' + Number(k.expectedMonthlyRevenue || 0).toLocaleString() + '원';
+  const freeSum = (k.freeUnlimitedCount || 0) + (k.freeTierCount || 0);
+  document.getElementById('kpi-free').textContent = freeSum + '곳';
+  document.getElementById('kpi-free-sub').textContent = `영구무료 ${k.freeUnlimitedCount || 0} / 무료플랜 ${k.freeTierCount || 0}`;
+  document.getElementById('kpi-trial').textContent = (k.trialCount || 0) + '곳';
+  document.getElementById('kpi-warn').textContent = ((k.expiringOrOverdueCount || 0) + (k.lockedCount || 0)) + '곳';
+}
+
+function renderServerInfo(info) {
+  const activeUrl = info.tunnelUrl || info.localUrl || window.location.origin;
+  document.getElementById('sa-url-pill').textContent = (info.tunnelActive && info.tunnelUrl) ? ('외부 HTTPS 연결: ' + info.tunnelUrl) : ('로컬 서버: ' + (info.localUrl || window.location.origin));
+  document.getElementById('sa-srv-info').innerHTML =
+    '<b>현재 구동 중인 서버 · 저장 경로</b><br>' +
+    '• <b>고객 접속 주소:</b> <code>' + h(activeUrl + '/erp.html') + '</code><br>' +
+    '• <b>로컬 DB 저장소:</b> <code>' + h(info.dataDir || '-') + '\\&lt;기관기호11자리&gt;</code><br>' +
+    '• <b>사내 NAS 미러:</b> <code>' + h(info.nasDir || '미연결') + '</code>';
+}
+
+function copyMainLoginUrl() {
+  const info = _overview.serverInfo || {};
+  const u = (info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html';
+  navigator.clipboard?.writeText(u).then(() => toast('접속 주소 복사 완료: ' + u)).catch(() => prompt('아래 주소를 복사하세요:', u));
+}
+
+function setFilter(f) {
+  _curFilter = f;
+  document.querySelectorAll('#sa-filter-pills .fpill').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderTenantTable();
+}
+
+function billingBadge(t) {
+  const m = {
+    FREE_UNLIMITED: ['t-free-unlim', '영구무료'],
+    FREE_TIER: ['t-free-tier', '무료플랜'],
+    TRIAL: ['t-trial', '무료체험'],
+    PAID: ['t-paid', '유료구독'],
+  };
+  const pair = m[t.billingType] || ['t-paid', t.billingType];
+  return '<span class="tag ' + pair[0] + '">' + pair[1] + '</span>' + (t.planName ? '<div style="font-size:11px;color:#475569;margin-top:2px;">' + h(t.planName) + '</div>' : '');
+}
+
+function statusBadge(st) {
+  const m = {
+    ACTIVE: ['st-active', '정상'],
+    EXPIRING: ['st-expiring', '만료임박'],
+    GRACE: ['st-grace', '유예기간'],
+    READONLY: ['st-readonly', '읽기전용'],
+    LOCKED: ['st-locked', '접속잠금'],
+  };
+  const pair = m[st] || ['st-active', st];
+  return '<span class="tag ' + pair[0] + '">' + pair[1] + '</span>';
+}
+
+function renderTenantTable() {
+  const q = (document.getElementById('sa-search').value || '').trim().toLowerCase();
+  const list = (_overview.tenants || []).filter(t => {
+    if (_curFilter === 'WARN') {
+      if (!['EXPIRING', 'GRACE', 'READONLY', 'LOCKED'].includes(t.status)) return false;
+    } else if (_curFilter !== 'ALL' && t.billingType !== _curFilter) {
+      return false;
+    }
+    if (q) {
+      const hay = [t.agency, t.orgNumber, t.agencyName, t.contactName, t.contactPhone, t.planName].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  const tb = document.getElementById('sa-tenant-tbody');
+  if (!list.length) {
+    tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#64748B;padding:22px;">조건에 맞는 기관이 없습니다.</td></tr>';
+    return;
+  }
+  tb.innerHTML = list.map(t => {
+    const expTxt = t.expiresAt ? (t.expiresAt + (t.daysLeft != null ? (t.daysLeft >= 0 ? ' (D-' + t.daysLeft + ')' : ' (만료+' + Math.abs(t.daysLeft) + '일)') : '')) : '제한없음';
+    const capTxt = (t.maxPatients > 0) ? (t.patientCount + ' / ' + t.maxPatients + '명') : (t.patientCount + '명 / 무제한');
+    const f = t.features || {};
+    const fHtml =
+      '<span class="feat-badge ' + (f.erp ? '' : 'feat-off') + '">ERP</span>' +
+      '<span class="feat-badge ' + (f.messengerApp ? '' : 'feat-off') + '">앱·봇</span>' +
+      '<span class="feat-badge ' + (f.consult ? '' : 'feat-off') + '">관제</span>' +
+      '<span class="feat-badge ' + (f.nhisAuto ? '' : 'feat-off') + '">공단</span>';
+    const lockBtn = t.isInternalProtected
+      ? '<span style="font-size:11px;color:#0F766E;font-weight:800;">직영보호</span>'
+      : ('<button type="button" class="btn xs ' + (t.manualLocked ? 'pri' : 'danger') + '" onclick="toggleLock(\'' + h(t.agency) + '\',' + (!t.manualLocked) + ')">' + (t.manualLocked ? '잠금해제' : '잠금') + '</button>');
+    return '<tr>' +
+      '<td><b>' + h(t.agency) + '</b><div style="font-size:10.5px;color:#64748B;">' + h(t.orgNumber) + '</div></td>' +
+      '<td><b>' + h(t.agencyName) + '</b><div style="font-size:11px;color:#475569;">' + h([t.contactName, t.contactPhone].filter(Boolean).join(' · ') || '-') + '</div></td>' +
+      '<td>' + billingBadge(t) + '</td>' +
+      '<td>' + (t.monthlyFee > 0 ? ('<b>' + Number(t.monthlyFee).toLocaleString() + '원</b>') : '<span style="color:#64748B;">0원</span>') + '</td>' +
+      '<td>' + h(expTxt) + '</td>' +
+      '<td>' + h(capTxt) + '</td>' +
+      '<td>' + fHtml + '</td>' +
+      '<td>' + statusBadge(t.status) + '</td>' +
+      '<td><div class="act-cell">' +
+        '<button type="button" class="btn xs pri" onclick="quickPlusMonth(\'' + h(t.agency) + '\',' + (t.monthlyFee || 0) + ')">+1개월</button>' +
+        '<button type="button" class="btn xs" onclick="openTenantModal(\'' + h(t.agency) + '\')">설정</button>' +
+        '<button type="button" class="btn xs" onclick="openExtendModal(\'' + h(t.agency) + '\')">입금이력</button>' +
+        lockBtn +
+        '<button type="button" class="btn xs blue" onclick="openWelcomeFor(\'' + h(t.agency) + '\')">카톡안내</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function onBillingTypeChange() {
+  const bt = document.getElementById('t-btype').value;
+  if (bt === 'FREE_UNLIMITED' || bt === 'FREE_TIER') {
+    document.getElementById('t-fee').value = '0';
+    document.getElementById('t-exp').value = '';
+  } else if (bt === 'TRIAL' && !document.getElementById('t-exp').value) {
+    const d = new Date(Date.now() + 30 * 86400000);
+    document.getElementById('t-exp').value = d.toISOString().slice(0, 10);
+  }
+}
+
+function applyPreset(kind) {
+  const d30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+  if (kind === 'FREE_DIRECT') {
+    document.getElementById('t-btype').value = 'FREE_UNLIMITED';
+    document.getElementById('t-plan').value = '직영 영구무료';
+    document.getElementById('t-fee').value = '0';
+    document.getElementById('t-exp').value = '';
+    document.getElementById('t-max-pts').value = '0';
+    setFeats(true, true, true, true);
+  } else if (kind === 'FREE_PARTNER') {
+    document.getElementById('t-btype').value = 'FREE_UNLIMITED';
+    document.getElementById('t-plan').value = '지인·제휴 영구무료';
+    document.getElementById('t-fee').value = '0';
+    document.getElementById('t-exp').value = '';
+    document.getElementById('t-max-pts').value = '0';
+    setFeats(true, true, true, true);
+  } else if (kind === 'FREE_SMALL') {
+    document.getElementById('t-btype').value = 'FREE_TIER';
+    document.getElementById('t-plan').value = '소규모 무료플랜 (15명)';
+    document.getElementById('t-fee').value = '0';
+    document.getElementById('t-exp').value = '';
+    document.getElementById('t-max-pts').value = '15';
+    setFeats(true, false, false, true);
+  } else if (kind === 'TRIAL_30') {
+    document.getElementById('t-btype').value = 'TRIAL';
+    document.getElementById('t-plan').value = '무료체험 30일';
+    document.getElementById('t-fee').value = '0';
+    document.getElementById('t-exp').value = d30;
+    document.getElementById('t-max-pts').value = '0';
+    setFeats(true, true, true, true);
+  } else if (kind === 'BASIC_30') {
+    document.getElementById('t-btype').value = 'PAID';
+    document.getElementById('t-plan').value = '베이직 (ERP 단독)';
+    document.getElementById('t-fee').value = '30000';
+    if (!document.getElementById('t-exp').value) document.getElementById('t-exp').value = d30;
+    document.getElementById('t-max-pts').value = '50';
+    setFeats(true, false, false, true);
+  } else if (kind === 'PRO_50') {
+    document.getElementById('t-btype').value = 'PAID';
+    document.getElementById('t-plan').value = '프로 (올인원)';
+    document.getElementById('t-fee').value = '50000';
+    if (!document.getElementById('t-exp').value) document.getElementById('t-exp').value = d30;
+    document.getElementById('t-max-pts').value = '0';
+    setFeats(true, true, true, true);
+  }
+}
+
+function setFeats(erp, msg, consult, nhis) {
+  document.getElementById('t-f-erp').checked = !!erp;
+  document.getElementById('t-f-msg').checked = !!msg;
+  document.getElementById('t-f-consult').checked = !!consult;
+  document.getElementById('t-f-nhis').checked = !!nhis;
+}
+
+function genTempPassword() {
+  const chars = '23456789abcdefghjkmnpqrstuvwxyz';
+  let out = '';
+  for (let i = 0; i < 8; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('t-login-pw').value = out;
+}
+
+function openTenantModal(ag) {
+  _editAgency = ag || '';
+  const t = (_overview.tenants || []).find(x => x.agency === ag) || null;
+  document.getElementById('md-tenant-title').textContent = t ? ('기관 구독 설정 — ' + t.agencyName) : '신규 고객 기관 개설';
+  const agInp = document.getElementById('t-agency');
+  agInp.value = t ? t.agency : '';
+  agInp.readOnly = Boolean(t);
+  document.getElementById('t-name').value = t ? t.agencyName : '';
+  document.getElementById('t-contact-nm').value = t ? t.contactName : '';
+  document.getElementById('t-contact-ph').value = t ? t.contactPhone : '';
+  document.getElementById('t-login-id').value = t ? (t.adminLoginId || '') : '원장';
+  document.getElementById('t-login-pw').value = '';
+  document.getElementById('t-btype').value = t ? t.billingType : 'TRIAL';
+  document.getElementById('t-plan').value = t ? t.planName : '무료체험 30일';
+  document.getElementById('t-fee').value = t ? String(t.monthlyFee || 0) : '0';
+  document.getElementById('t-exp').value = t ? (t.expiresAt || '') : new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+  document.getElementById('t-grace').value = t ? String(t.graceDays != null ? t.graceDays : 7) : '7';
+  document.getElementById('t-exp-action').value = t ? (t.expiredAction || 'READONLY') : 'READONLY';
+  document.getElementById('t-max-pts').value = t ? String(t.maxPatients || 0) : '0';
+  document.getElementById('t-support').value = t ? (t.supportContact || '본사 고객센터') : '본사 고객센터';
+  document.getElementById('t-memo').value = t ? (t.memo || '') : '';
+  const f = (t && t.features) || { erp: true, messengerApp: true, consult: true, nhisAuto: true };
+  setFeats(f.erp, f.messengerApp, f.consult, f.nhisAuto);
+  document.getElementById('btn-t-delete').style.display = (t && !t.isInternalProtected) ? 'inline-flex' : 'none';
+  document.getElementById('md-tenant').classList.add('open');
+}
+
+async function saveTenantForm() {
+  const payload = {
+    agency: (document.getElementById('t-agency').value || '').trim(),
+    agencyName: (document.getElementById('t-name').value || '').trim(),
+    contactName: (document.getElementById('t-contact-nm').value || '').trim(),
+    contactPhone: (document.getElementById('t-contact-ph').value || '').trim(),
+    adminLoginId: (document.getElementById('t-login-id').value || '').trim(),
+    adminPassword: (document.getElementById('t-login-pw').value || '').trim(),
+    billingType: document.getElementById('t-btype').value,
+    planName: (document.getElementById('t-plan').value || '').trim(),
+    monthlyFee: Number(document.getElementById('t-fee').value || 0),
+    expiresAt: (document.getElementById('t-exp').value || '').trim(),
+    graceDays: Number(document.getElementById('t-grace').value || 7),
+    expiredAction: document.getElementById('t-exp-action').value,
+    maxPatients: Number(document.getElementById('t-max-pts').value || 0),
+    supportContact: (document.getElementById('t-support').value || '').trim(),
+    memo: (document.getElementById('t-memo').value || '').trim(),
+    features: {
+      erp: document.getElementById('t-f-erp').checked,
+      messengerApp: document.getElementById('t-f-msg').checked,
+      consult: document.getElementById('t-f-consult').checked,
+      nhisAuto: document.getElementById('t-f-nhis').checked,
+    },
+  };
+  try {
+    const res = await saApi('/api/super/tenant/save', payload);
+    closeMd('md-tenant');
+    toast('기관 구독 정보가 저장되었습니다.');
+    await loadOverview();
+    if (res.created || payload.adminPassword) {
+      document.getElementById('welcome-msg-box').value = res.welcomeMessage || '';
+      document.getElementById('md-welcome').classList.add('open');
+    }
+  } catch (e) {
+    alert(e.message || '저장 실패');
+  }
+}
+
+async function deleteCurrentTenant() {
+  if (!_editAgency) return;
+  if (!confirm('기관 [' + _editAgency + '] 을 구독 목록에서 삭제하시겠습니까?')) return;
+  const delData = confirm('해당 기관의 데이터 폴더도 함께 삭제할까요? (취소 시 데이터는 서버에 보존됩니다)');
+  try {
+    await saApi('/api/super/tenant/delete', { agency: _editAgency, deleteData: delData });
+    closeMd('md-tenant');
+    toast('기관이 삭제되었습니다.');
+    await loadOverview();
+  } catch (e) {
+    alert(e.message || '삭제 실패');
+  }
+}
+
+function openWelcomeFor(ag) {
+  const t = (_overview.tenants || []).find(x => x.agency === ag);
+  if (!t) return;
+  const info = _overview.serverInfo || {};
+  const loginUrl = (info.tunnelUrl || info.localUrl || window.location.origin) + '/erp.html';
+  const msg =
+    '[행복케어 ERP 개통 안내]\n' +
+    '기관명: ' + t.agencyName + '\n' +
+    '기관기호(11자리): ' + t.agency + '\n' +
+    '이용 플랜: ' + (t.planName || t.billingType) + '\n' +
+    '만료일: ' + (t.expiresAt || '제한 없음 (무료)') + '\n\n' +
+    '■ 접속 주소\n' + loginUrl + '\n\n' +
+    '■ 로그인 정보\n' +
+    '- 기관기호(11자리): ' + t.agency + '\n' +
+    '- 관리자 아이디: ' + (t.adminLoginId || '원장') + '\n' +
+    '- 비밀번호: (안내받은 비밀번호)\n\n' +
+    '■ 3분 초기 세팅 순서\n' +
+    '1) 위 주소로 접속해 기관기호·아이디·비밀번호로 로그인\n' +
+    '2) 첫 화면 안내 마법사에서 [기존 장기요양 프로그램 자료 가져오기] 또는 엑셀 일괄 업로드\n' +
+    '3) 상단 [모바일앱] QR코드 스캔으로 보호자·요양보호사 앱 즉시 개통';
+  document.getElementById('welcome-msg-box').value = msg;
+  document.getElementById('md-welcome').classList.add('open');
+}
+
+function copyWelcomeMsg() {
+  const txt = document.getElementById('welcome-msg-box').value || '';
+  navigator.clipboard?.writeText(txt).then(() => toast('카톡 개통 안내문구 복사 완료!')).catch(() => {
+    document.getElementById('welcome-msg-box').select();
+    document.execCommand('copy');
+    toast('안내문구 복사 완료!');
+  });
+}
+
+async function quickPlusMonth(ag, fee) {
+  try {
+    await saApi('/api/super/tenant/extend', {
+      agency: ag, months: 1, days: 0, paymentAmount: Number(fee || 0), method: '계좌이체', memo: '원클릭 1개월 연장'
+    });
+    toast(ag + ' 이용기간 +1개월 연장 완료');
+    await loadOverview();
+  } catch (e) {
+    alert(e.message || '연장 실패');
+  }
+}
+
+async function toggleLock(ag, locked) {
+  let reason = '';
+  if (locked) {
+    reason = prompt('잠금 사유를 입력해 주세요 (예: 이용료 미납):', '이용료 미납') || '관리자 정지';
+  }
+  try {
+    await saApi('/api/super/tenant/lock', { agency: ag, locked: !!locked, reason });
+    toast(ag + (locked ? ' 접속 잠금 처리됨' : ' 잠금 해제됨'));
+    await loadOverview();
+  } catch (e) {
+    alert(e.message || '잠금 처리 실패');
+  }
+}
+
+function openExtendModal(ag) {
+  _extAgency = ag;
+  const t = (_overview.tenants || []).find(x => x.agency === ag);
+  if (!t) return;
+  document.getElementById('md-ext-title').textContent = '연장 / 입금이력 — ' + t.agencyName + ' (' + ag + ')';
+  document.getElementById('ext-months').value = '1';
+  document.getElementById('ext-days').value = '0';
+  document.getElementById('ext-amt').value = String(t.monthlyFee || 0);
+  document.getElementById('ext-memo').value = '';
+  const hist = t.paymentHistory || [];
+  document.getElementById('ext-hist-tbody').innerHTML = hist.length ? hist.map(r =>
+    '<tr><td>' + h((r.at || '').slice(0, 16).replace('T', ' ')) + '</td><td>' +
+    h((r.months ? r.months + '개월 ' : '') + (r.days ? r.days + '일' : '')) + '</td><td>' +
+    Number(r.amount || 0).toLocaleString() + '원</td><td>' + h(r.method || '-') + '</td><td><b>' +
+    h(r.newExpiresAt || '-') + '</b></td><td>' + h(r.memo || '') + '</td></tr>'
+  ).join('') : '<tr><td colspan="6" style="text-align:center;color:#64748B;">입금·연장 이력이 없습니다.</td></tr>';
+  document.getElementById('md-extend').classList.add('open');
+}
+
+async function quickExtend(m, d, forceType, forceAmt) {
+  const t = (_overview.tenants || []).find(x => x.agency === _extAgency) || {};
+  const amt = (forceAmt !== undefined) ? forceAmt : (Number(t.monthlyFee || 0) * Math.max(1, m));
+  try {
+    await saApi('/api/super/tenant/extend', {
+      agency: _extAgency,
+      months: m,
+      days: d,
+      paymentAmount: amt,
+      method: amt > 0 ? '계좌이체' : '무료부여',
+      billingType: forceType || '',
+      memo: '빠른 연장 (' + (m ? m + '개월' : d + '일') + ')',
+    });
+    toast('기간 연장 및 이력 기록 완료');
+    await loadOverview();
+    openExtendModal(_extAgency);
+  } catch (e) {
+    alert(e.message || '연장 실패');
+  }
+}
+
+async function submitExtendForm() {
+  try {
+    await saApi('/api/super/tenant/extend', {
+      agency: _extAgency,
+      months: Number(document.getElementById('ext-months').value || 0),
+      days: Number(document.getElementById('ext-days').value || 0),
+      paymentAmount: Number(document.getElementById('ext-amt').value || 0),
+      method: document.getElementById('ext-method').value,
+      memo: (document.getElementById('ext-memo').value || '').trim(),
+    });
+    toast('연장 및 입금 기록이 반영되었습니다.');
+    await loadOverview();
+    openExtendModal(_extAgency);
+  } catch (e) {
+    alert(e.message || '연장 실패');
+  }
+}
+
+loadOverview();
+</script>
+</body>
+</html>
