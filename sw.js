@@ -1,4 +1,4 @@
-// 행복케어 스마트 통합앱 PWA Service Worker (v64 no-store + Web Push 알림 수신·딥링크)
+// 행복케어 스마트 통합앱 PWA Service Worker (v65 no-store + Web Push 알림 수신·딥링크)
 self.addEventListener('install', (e) => { self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
   e.waitUntil(
