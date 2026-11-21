@@ -289,6 +289,10 @@
           </div>
         </div>
         <div class="fld full">
+          <label for="t-linked-ags">연계 다기관 기호 (복수 기관 통합 관리 시 쉼표로 입력, 단독 기관은 비움)</label>
+          <input class="inp" id="t-linked-ags" placeholder="예: 33020000009, 33020000315">
+        </div>
+        <div class="fld full">
           <label for="t-memo">본사 관리 메모 (계약 조건·입금 계좌 등)</label>
           <textarea class="inp" id="t-memo" rows="2"></textarea>
         </div>
@@ -517,8 +521,12 @@ function renderTenantTable() {
     const lockBtn = t.isInternalProtected
       ? '<span style="font-size:11px;color:#0F766E;font-weight:800;">직영보호</span>'
       : ('<button type="button" class="btn xs ' + (t.manualLocked ? 'pri' : 'danger') + '" onclick="toggleLock(\'' + h(t.agency) + '\',' + (!t.manualLocked) + ')">' + (t.manualLocked ? '잠금해제' : '잠금') + '</button>');
+    const linkedAgs = Array.isArray(t.linkedAgencies) ? t.linkedAgencies : [];
+    const linkedBadge = linkedAgs.length > 1
+      ? ('<div style="font-size:10.5px;color:#1D4ED8;font-weight:700;margin-top:2px;">연계 ' + linkedAgs.length + '기관</div>')
+      : '';
     return '<tr>' +
-      '<td><b>' + h(t.agency) + '</b><div style="font-size:10.5px;color:#64748B;">' + h(t.orgNumber) + '</div></td>' +
+      '<td><b>' + h(t.agency) + '</b><div style="font-size:10.5px;color:#64748B;">' + h(t.orgNumber) + '</div>' + linkedBadge + '</td>' +
       '<td><b>' + h(t.agencyName) + '</b><div style="font-size:11px;color:#475569;">' + h([t.contactName, t.contactPhone].filter(Boolean).join(' · ') || '-') + '</div></td>' +
       '<td>' + billingBadge(t) + '</td>' +
       '<td>' + (t.monthlyFee > 0 ? ('<b>' + Number(t.monthlyFee).toLocaleString() + '원</b>') : '<span style="color:#64748B;">0원</span>') + '</td>' +
@@ -629,6 +637,9 @@ function openTenantModal(ag) {
   document.getElementById('t-exp-action').value = t ? (t.expiredAction || 'READONLY') : 'READONLY';
   document.getElementById('t-max-pts').value = t ? String(t.maxPatients || 0) : '0';
   document.getElementById('t-support').value = t ? (t.supportContact || '본사 고객센터') : '본사 고객센터';
+  const linkedList = (t && Array.isArray(t.linkedAgencies)) ? t.linkedAgencies.filter(c => c && c !== t.agency) : [];
+  const linkedEl = document.getElementById('t-linked-ags');
+  if (linkedEl) linkedEl.value = linkedList.join(', ');
   document.getElementById('t-memo').value = t ? (t.memo || '') : '';
   const f = (t && t.features) || { erp: true, messengerApp: true, consult: true, nhisAuto: true };
   setFeats(f.erp, f.messengerApp, f.consult, f.nhisAuto);
@@ -652,6 +663,8 @@ async function saveTenantForm() {
     expiredAction: document.getElementById('t-exp-action').value,
     maxPatients: Number(document.getElementById('t-max-pts').value || 0),
     supportContact: (document.getElementById('t-support').value || '').trim(),
+    linkedAgencies: (document.getElementById('t-linked-ags') ? document.getElementById('t-linked-ags').value : '')
+      .split(/[\s,;]+/).map(s => s.replace(/[^0-9]/g, '')).filter(s => s.length === 11),
     memo: (document.getElementById('t-memo').value || '').trim(),
     features: {
       erp: document.getElementById('t-f-erp').checked,
